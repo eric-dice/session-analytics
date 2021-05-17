@@ -29,6 +29,7 @@ for (a in 1:length(session.day.links)){
     motion <- rcs.page %>% html_nodes(xpath= '/html/body/div[5]/div/div/div/div/div[2]/div/div[1]/div[2]') %>% html_text()
     motion <- gsub("[\r\n\t]", "", motion)
     motion <-trimws(motion)
+    prime.sponsor <- rcs.page %>% html_nodes(xpath= '/html/body/div[5]/div/div/div/div/div[2]/div/div[1]/div[5]/div[1]/div[2]/a') %>% html_text()
     yea.votes <- rcs.page %>% html_nodes("#RCVotesSum div:nth-child(2)") %>% html_text()
     nay.votes <- rcs.page %>% html_nodes("#RCVotesSum div:nth-child(5)") %>% html_text()
     lve.votes <- rcs.page %>% html_nodes("#RCVotesSum div:nth-child(8)") %>% html_text()
@@ -61,8 +62,10 @@ for (a in 1:length(session.day.links)){
       bill.number <- paste("Uncontested Calendar -", vote.date)}
     if (is_empty(bill.number)) {bill.number <- rcs.page %>% html_nodes( xpath= '/html/body/div[5]/div/div/div/div/div[2]/div/div[1]/div[1]/div[3]') %>% html_text()}
     if (is_empty(short.title)) {short.title <- NA}
+    if (is_empty(prime.sponsor)) {prime.sponsor <-NA }
     #push data to frame and bind to master list
     vote.data$bill <- bill.number
+    vote.data$prime.sponsor <- prime.sponsor
     vote.data$motion <- motion
     vote.data$rcs.number <- rcs.number
     vote.data$vote.date <- vote.date
@@ -81,7 +84,7 @@ all.votes <- rbind(all.votes, days.votes)
 #Clean-up
 all.votes$vote.data <- gsub("[\r\n\t]", "", all.votes$vote.data)
 all.votes$motion <- gsub("[\r\n\t]", "", all.votes$motion)
-all.votes$motion <- str_trim(all.votes$motion, side = c("both"))
+all.votes$motsaveion <- str_trim(all.votes$motion, side = c("both"))
 all.votes$motion <- str_squish(all.votes$motion)
 
 all.votes$bill <- gsub("[\r\n\t]", "", all.votes$bill)
